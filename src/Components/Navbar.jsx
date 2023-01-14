@@ -1,15 +1,9 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import MenuIcon from "@mui/icons-material/Menu";
-import FeaturedPlayListIcon from "@mui/icons-material/FeaturedPlayList";
-import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import HomeIcon from "@mui/icons-material/Home";
 import ContactsIcon from "@mui/icons-material/Contacts";
-import logoImg from "../media/logo.png";
-import { Container } from "@mui/system";
-import CustomButton from "./CustomButton";
+import FeaturedPlayListIcon from "@mui/icons-material/FeaturedPlayList";
+import HomeIcon from "@mui/icons-material/Home";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import MenuIcon from "@mui/icons-material/Menu";
+import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
 import {
   Drawer,
   List,
@@ -17,11 +11,58 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  styled,
+  styled
 } from "@mui/material";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { Container } from "@mui/system";
+import * as React from "react";
 import { useState } from "react";
+import logoImg from "../media/logo.png";
+import CustomButton from "./CustomButton";
 
 export const Navbar = () => {
+  const [mobileMenu, setMobieMenu] = useState({
+    left: false,
+  });
+
+  const toggleDrawer = (anchor, open) => (event) => {
+    if (
+      event.type === "keydown" &&
+      (event.type === "Tab" || event.type === "Shift")
+    ) {
+      return;
+    }
+    setMobieMenu({ ...mobileMenu, [anchor]: open });
+  };
+  const list = (anchor) => (
+    <Box
+      sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 250 }}
+      role="presentation"
+      onClick={toggleDrawer(anchor, false)}
+      onKeyDown={toggleDrawer(anchor, false)}
+    >
+      <List>
+        {["Home", "Features", "Services", "Listed", "Contact"].map(
+          (text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  {index === 0 && <HomeIcon />}
+                  {index === 1 && <FeaturedPlayListIcon />}
+                  {index === 2 && <MiscellaneousServicesIcon />}
+                  {index === 3 && <ListAltIcon />}
+                  {index === 4 && <ContactsIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          )
+        )}
+      </List>
+    </Box>
+  );
+
   const NavLink = styled(Typography)(({ theme }) => ({
     fontSize: "14px",
     color: "#4F5361",
@@ -79,8 +120,15 @@ export const Navbar = () => {
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <CustomMenuIcon />
-          <NavbarLogo src={logoImg} alt="logoImg" />
+          <CustomMenuIcon onClick={toggleDrawer("left", true)} />
+          <Drawer
+            anchor="left"
+            open={mobileMenu["left"]}
+            onClose={toggleDrawer("left", false)}
+          >
+            {list("left")}
+          </Drawer>
+          <NavbarLogo src={logoImg} alt="logo" />
         </Box>
         <NavbarLinksBox>
           <NavLink variant="body2">Home</NavLink>
@@ -89,6 +137,22 @@ export const Navbar = () => {
           <NavLink variant="body2">Listed</NavLink>
           <NavLink variant="body2">Contact</NavLink>
         </NavbarLinksBox>
+      </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "1rem",
+        }}
+      >
+        <NavLink variant="body2">Sign Up</NavLink>
+        <CustomButton
+          backgroudColor="#0F1B4C"
+          color="#fff"
+          buttonText="Register"
+        />
       </Box>
     </NavbarContainer>
   );
